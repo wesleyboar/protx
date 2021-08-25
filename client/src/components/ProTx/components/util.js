@@ -543,6 +543,14 @@ const getObservedFeatureValueType = selectedObservedFeatureCode => {
   return 'Total Count';
 };
 
+export const getObservedFeatureDetails = selectedObservedFeatureCode => {
+  const featureMatch = OBSERVED_FEATURES.find(
+    f => selectedObservedFeatureCode === f.field
+  );
+
+  return featureMatch;
+};
+
 /**
  *
  * @param {*} typesDataArray

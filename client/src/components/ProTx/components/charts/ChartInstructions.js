@@ -15,7 +15,7 @@ function ChartInstructions({
     if (showCurrentDescription) {
       return (
         <div>
-          <div className="chart-description-label">Description</div>
+          <h3>Description</h3>
           {currentDescription}
         </div>
       );

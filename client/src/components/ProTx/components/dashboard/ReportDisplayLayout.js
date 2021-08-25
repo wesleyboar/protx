@@ -37,7 +37,7 @@ function ReportDisplayLayout({
           year={year}
           selectedGeographicFeature={selectedGeographicFeature}
           data={data}
-          // showInstructions
+          showInstructions
         />
       </div>
     </div>

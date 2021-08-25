@@ -4,49 +4,56 @@ export const PREDICTIVE_FEATURES_TABLE_DATA = [
     Rank_By_Causal_Strength: '1',
     Rank_By_Random_Forest_Feature_Importance: '1',
     Average_Rank: '1.0',
-    Ensemble_Rank: '1'
+    Ensemble_Rank: '1',
+    Code: 'E_SNGPNT'
   },
   {
     Demographic_Feature: 'Number of Persons in Poverty',
     Rank_By_Causal_Strength: '4',
     Rank_By_Random_Forest_Feature_Importance: '2',
     Average_Rank: '3.0',
-    Ensemble_Rank: '2'
+    Ensemble_Rank: '2',
+    Code: 'E_POV'
   },
   {
     Demographic_Feature: 'Per Capita Income',
     Rank_By_Causal_Strength: '3',
     Rank_By_Random_Forest_Feature_Importance: '5',
     Average_Rank: '4.0',
-    Ensemble_Rank: '3'
+    Ensemble_Rank: '3',
+    Code: 'E_PCI'
   },
   {
     Demographic_Feature: 'Number of Persons Age 17 and Younger',
     Rank_By_Causal_Strength: '6',
     Rank_By_Random_Forest_Feature_Importance: '4',
     Average_Rank: '5.0',
-    Ensemble_Rank: '4'
+    Ensemble_Rank: '4',
+    Code: 'E_AGE17'
   },
   {
     Demographic_Feature: 'Number of Persons without High School Diploma',
     Rank_By_Causal_Strength: '12',
     Rank_By_Random_Forest_Feature_Importance: '3',
     Average_Rank: '7.5',
-    Ensemble_Rank: '5'
+    Ensemble_Rank: '5',
+    Code: 'E_NOHSDP'
   },
   {
     Demographic_Feature: 'Number of Persons Living in Group Quarters',
     Rank_By_Causal_Strength: '2',
     Rank_By_Random_Forest_Feature_Importance: '18',
     Average_Rank: '10.0',
-    Ensemble_Rank: '6'
+    Ensemble_Rank: '6',
+    Code: 'E_GROUPQ'
   },
   {
     Demographic_Feature: 'Number of Households with Crowding',
     Rank_By_Causal_Strength: '5',
     Rank_By_Random_Forest_Feature_Importance: '16',
     Average_Rank: '10.5',
-    Ensemble_Rank: '7'
+    Ensemble_Rank: '7',
+    Code: 'E_CROWD'
   }
 ];
 

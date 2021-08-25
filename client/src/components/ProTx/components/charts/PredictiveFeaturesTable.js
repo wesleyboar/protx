@@ -1,31 +1,64 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { getObservedFeatureDetails } from '../util';
 import {
   PREDICTIVE_FEATURES_TABLE_DATA,
   PREDICTIVE_FEATURES_TABLE_NOTES
 } from './predictiveFeaturesTableData';
 import './PredictiveFeaturesTable.css';
 
-/**
- * TODO: Pass in the selectedFeature object with its associated data.
- * TODO: Use object for conditional rendering in the table.
- */
-
 const tableData = PREDICTIVE_FEATURES_TABLE_DATA;
 const tableNotes = PREDICTIVE_FEATURES_TABLE_NOTES;
 
-function PredictiveFeaturesTable({ selectedGeographicFeature }) {
-  let selectedFeatureCheck = false; // Once working, this check goes away.
+function PredictiveFeaturesTable({ observedFeature }) {
   const chartSubtitle = 'Table 1';
   const chartTitle = 'Texas Statewide Data';
+  let selectedDemographicFeatureCheck = false;
+  let currentObservedFeature;
+  let selectedDemographicFeature;
 
-  const selectedFeature = {
-    Demographic_Feature: 'SF_NAME',
-    Rank_By_Causal_Strength: 'SF_RBCS',
-    Rank_By_Random_Forest_Feature_Importance: 'SF_RBRFFI',
-    Average_Rank: 'SF_AR',
-    Ensemble_Rank: 'SF_ER'
+  const determineIfPreselected = observedFeatureCode => {
+    const inList = PREDICTIVE_FEATURES_TABLE_DATA.find(
+      f => observedFeatureCode === f.Code
+    );
+    if (inList) {
+      return true;
+    }
+    return false;
   };
+
+  const isPreselected = determineIfPreselected(observedFeature);
+
+  if (observedFeature && !isPreselected) {
+    selectedDemographicFeatureCheck = true;
+    currentObservedFeature = getObservedFeatureDetails(observedFeature);
+
+    // Check the object for completeness.
+    if (!currentObservedFeature.name) {
+      currentObservedFeature.name = 'Observed Feature Name';
+    }
+    if (!currentObservedFeature.strength) {
+      currentObservedFeature.strength = 'TBD';
+    }
+    if (!currentObservedFeature.importance) {
+      currentObservedFeature.importance = 'TBD';
+    }
+    if (!currentObservedFeature.average_rank) {
+      currentObservedFeature.average_rank = 'TBD';
+    }
+    if (!currentObservedFeature.ensemble_rank) {
+      currentObservedFeature.ensemble_rank = 'TBD';
+    }
+
+    selectedDemographicFeature = {
+      Demographic_Feature: currentObservedFeature.name,
+      Rank_By_Causal_Strength: currentObservedFeature.strength,
+      Rank_By_Random_Forest_Feature_Importance:
+        currentObservedFeature.importance,
+      Average_Rank: currentObservedFeature.average_rank,
+      Ensemble_Rank: currentObservedFeature.ensemble_rank
+    };
+  }
 
   const featuresTableHeaderRow = () => {
     return (
@@ -75,7 +108,7 @@ function PredictiveFeaturesTable({ selectedGeographicFeature }) {
   });
 
   const getFeatureTable = () => {
-    if (selectedFeatureCheck) {
+    if (selectedDemographicFeatureCheck) {
       const getSelectedFeatureTableData = feature => {
         const currentSelectedFeature = feature;
         return (
@@ -93,8 +126,8 @@ function PredictiveFeaturesTable({ selectedGeographicFeature }) {
         );
       };
 
-      const selectedFeatureTableData = getSelectedFeatureTableData(
-        selectedFeature
+      const selectedDemographicFeatureTableData = getSelectedFeatureTableData(
+        selectedDemographicFeature
       );
 
       return (
@@ -109,7 +142,7 @@ function PredictiveFeaturesTable({ selectedGeographicFeature }) {
             <table>
               {featureTableHeader}
               {featureTableData}
-              {selectedFeatureTableData}
+              {selectedDemographicFeatureTableData}
             </table>
           </div>
           <div className="feature-table-info">{featureTableAnnotations}</div>
@@ -135,16 +168,12 @@ function PredictiveFeaturesTable({ selectedGeographicFeature }) {
     );
   };
 
-  if (selectedGeographicFeature && selectedGeographicFeature !== ' ') {
-    selectedFeatureCheck = true;
-  }
-
   const featureTable = getFeatureTable();
   return featureTable;
 }
 
 PredictiveFeaturesTable.propTypes = {
-  selectedGeographicFeature: PropTypes.string.isRequired
+  observedFeature: PropTypes.string.isRequired
 };
 
 export default PredictiveFeaturesTable;

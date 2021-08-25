@@ -6,6 +6,14 @@ import PredictiveFeaturesPlot from './PredictiveFeaturesPlot';
 import ChartInstructions from './ChartInstructions';
 import './ReportChart.css';
 
+/**
+ *
+ * TODO: Rename this component to AnalyticsChart.
+ * TODO: Fix Table logic.
+ * Table 1 is driven by demographics selection (observedFeature).
+ * Table 2 is driven by county region selection (selectedGeographicFeature).
+ *
+ */
 function ReportChart({
   mapType,
   geography,
@@ -17,21 +25,18 @@ function ReportChart({
   showInstructions
 }) {
   const reportDropdownInstructions = [
-    'Map is restricted to Demographic Features.',
     'Map is restricted to the County Area.',
     'Select a Demographic Feature.',
     'TimeFrame is restricted to most recent census data (2019).'
   ];
   const reportMapInstructions = ['Select a Geographic Region.'];
-  const reportShowDescription = false;
+  const reportShowDescription = true;
   const reportDescription = 'Description needed.';
 
   if (selectedGeographicFeature) {
     return (
       <div className="report-chart">
-        <PredictiveFeaturesTable
-          selectedGeographicFeature={selectedGeographicFeature}
-        />
+        <PredictiveFeaturesTable observedFeature={observedFeature} />
         <PredictiveFeaturesPlot
           mapType={mapType}
           geography={geography}
@@ -48,7 +53,7 @@ function ReportChart({
 
   return (
     <div className="report-chart">
-      <PredictiveFeaturesTable />
+      <PredictiveFeaturesTable observedFeature={observedFeature} />
       {showInstructions && (
         <ChartInstructions
           dropdownInstructions={reportDropdownInstructions}
