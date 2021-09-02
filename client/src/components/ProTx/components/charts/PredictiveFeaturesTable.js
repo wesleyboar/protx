@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getObservedFeatureDetails } from '../util';
+// import { getObservedFeatureDetails } from '../shared/dataUtils';
 import {
   PREDICTIVE_FEATURES_TABLE_DATA,
   PREDICTIVE_FEATURES_TABLE_NOTES
@@ -10,28 +10,35 @@ import './PredictiveFeaturesTable.css';
 const tableData = PREDICTIVE_FEATURES_TABLE_DATA;
 const tableNotes = PREDICTIVE_FEATURES_TABLE_NOTES;
 
-function PredictiveFeaturesTable({ observedFeature }) {
+function PredictiveFeaturesTable({
+  observedFeature,
+  selectedGeographicFeature
+}) {
   const chartSubtitle = 'Table 1';
   const chartTitle = 'Texas Statewide Data';
-  let selectedDemographicFeatureCheck = false;
-  let currentObservedFeature;
+  const selectedDemographicFeatureCheck = false; // true - populates data table.
+  const currentObservedFeature = {};
   let selectedDemographicFeature;
 
   const determineIfPreselected = observedFeatureCode => {
-    const inList = PREDICTIVE_FEATURES_TABLE_DATA.find(
-      f => observedFeatureCode === f.Code
-    );
-    if (inList) {
-      return true;
+    if (observedFeatureCode !== '') {
+      const inList = PREDICTIVE_FEATURES_TABLE_DATA.find(
+        f => observedFeatureCode === f.Code
+      );
+      if (inList) {
+        return true;
+      }
     }
     return false;
   };
 
-  const isPreselected = determineIfPreselected(observedFeature);
+  const isPreselected = determineIfPreselected(currentObservedFeature);
 
   if (observedFeature && !isPreselected) {
-    selectedDemographicFeatureCheck = true;
-    currentObservedFeature = getObservedFeatureDetails(observedFeature);
+    /**
+     * TODO: Populate the currentObservedFeature object using the observedFeature value.
+     * currentObservedFeature = getObservedFeatureDetails(observedFeature);
+     */
 
     // Check the object for completeness.
     if (!currentObservedFeature.name) {
@@ -173,7 +180,11 @@ function PredictiveFeaturesTable({ observedFeature }) {
 }
 
 PredictiveFeaturesTable.propTypes = {
-  observedFeature: PropTypes.string.isRequired
+  observedFeature: PropTypes.string
+};
+
+PredictiveFeaturesTable.defaultProps = {
+  observedFeature: ''
 };
 
 export default PredictiveFeaturesTable;

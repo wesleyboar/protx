@@ -15,17 +15,12 @@ function ChartInstructions({
     if (showCurrentDescription) {
       return (
         <div>
-          <h3>Description</h3>
-          {currentDescription}
+          <div className="chart-description-label">Description</div>
+          <div className="chart-description">{currentDescription}</div>
         </div>
       );
     }
-    return (
-      <div>
-        <h3>Description</h3>
-        None.
-      </div>
-    );
+    return <div />;
   };
 
   const currentDescription = getCurrentDescription(
@@ -48,7 +43,7 @@ function ChartInstructions({
           <li key={instruction}>{instruction}</li>
         ))}
       </ul>
-      <div>{currentDescription}</div>
+      {currentDescription}
     </div>
   );
 }
