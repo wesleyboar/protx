@@ -18,7 +18,7 @@ function PredictiveFeaturesTable({
   const chartTitle = 'Texas Statewide Data';
   const selectedDemographicFeatureCheck = false; // true - populates data table.
   const currentObservedFeature = {};
-  let selectedDemographicFeature;
+  // let selectedDemographicFeature;
 
   const determineIfPreselected = observedFeatureCode => {
     if (observedFeatureCode !== '') {
@@ -57,14 +57,14 @@ function PredictiveFeaturesTable({
       currentObservedFeature.ensemble_rank = 'TBD';
     }
 
-    selectedDemographicFeature = {
-      Demographic_Feature: currentObservedFeature.name,
-      Rank_By_Causal_Strength: currentObservedFeature.strength,
-      Rank_By_Random_Forest_Feature_Importance:
-        currentObservedFeature.importance,
-      Average_Rank: currentObservedFeature.average_rank,
-      Ensemble_Rank: currentObservedFeature.ensemble_rank
-    };
+    // selectedDemographicFeature = {
+    //   Demographic_Feature: currentObservedFeature.name,
+    //   Rank_By_Causal_Strength: currentObservedFeature.strength,
+    //   Rank_By_Random_Forest_Feature_Importance:
+    //     currentObservedFeature.importance,
+    //   Average_Rank: currentObservedFeature.average_rank,
+    //   Ensemble_Rank: currentObservedFeature.ensemble_rank
+    // };
   }
 
   const featuresTableHeaderRow = () => {
@@ -116,26 +116,26 @@ function PredictiveFeaturesTable({
 
   const getFeatureTable = () => {
     if (selectedDemographicFeatureCheck) {
-      const getSelectedFeatureTableData = feature => {
-        const currentSelectedFeature = feature;
-        return (
-          <tr className="feature-table-selected-feature">
-            <td>{currentSelectedFeature.Demographic_Feature}</td>
-            <td className="ensemble-rank-value">
-              {currentSelectedFeature.Ensemble_Rank}
-            </td>
-            <td>{currentSelectedFeature.Rank_By_Causal_Strength}</td>
-            <td>
-              {currentSelectedFeature.Rank_By_Random_Forest_Feature_Importance}
-            </td>
-            <td>{currentSelectedFeature.Average_Rank}</td>
-          </tr>
-        );
-      };
+      // const getSelectedFeatureTableData = feature => {
+      //   const currentSelectedFeature = feature;
+      //   return (
+      //     <tr className="feature-table-selected-feature">
+      //       <td>{currentSelectedFeature.Demographic_Feature}</td>
+      //       <td className="ensemble-rank-value">
+      //         {currentSelectedFeature.Ensemble_Rank}
+      //       </td>
+      //       <td>{currentSelectedFeature.Rank_By_Causal_Strength}</td>
+      //       <td>
+      //         {currentSelectedFeature.Rank_By_Random_Forest_Feature_Importance}
+      //       </td>
+      //       <td>{currentSelectedFeature.Average_Rank}</td>
+      //     </tr>
+      //   );
+      // };
 
-      const selectedDemographicFeatureTableData = getSelectedFeatureTableData(
-        selectedDemographicFeature
-      );
+      // const selectedDemographicFeatureTableData = getSelectedFeatureTableData(
+      //   selectedDemographicFeature
+      // );
 
       return (
         <div className="feature-table">
@@ -150,7 +150,7 @@ function PredictiveFeaturesTable({
               <thead>{featureTableHeader}</thead>
               <tbody>
                 {featureTableData}
-                {selectedFeatureTableData}
+                {/* {selectedFeatureTableData} */}
               </tbody>
             </table>
           </div>
