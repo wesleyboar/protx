@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import ObservedFeaturesPlot from './ObservedFeaturesPlot';
+import ObservedFeaturesPlot from './ObservedFeaturesPlot'; // Sub (subplots)
 import ChartInstructions from './ChartInstructions';
 import './ObservedFeaturesChart.css';
 
@@ -11,8 +12,25 @@ function ObservedFeaturesChart({
   year,
   selectedGeographicFeature,
   data,
-  showInstructions
+  showInstructions,
+  showRate
 }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (observedFeature === 'maltreatment') {
+      return;
+    }
+    dispatch({
+      type: 'FETCH_PROTX_DEMOGRAPHIC_DISTRIBUTION',
+      payload: {
+        area: geography,
+        variable: observedFeature,
+        unit: showRate ? 'percent' : 'count'
+      }
+    });
+  }, [mapType, geography, observedFeature, showRate]);
+
   const observedFeaturesDropdownInstructions = [
     'Select an Area.',
     'Select a Demographic Feature.',
@@ -33,6 +51,7 @@ function ObservedFeaturesChart({
           year={year}
           selectedGeographicFeature={selectedGeographicFeature}
           data={data}
+          showRate={showRate}
         />
       </div>
     );
@@ -59,6 +78,7 @@ ObservedFeaturesChart.propTypes = {
   selectedGeographicFeature: PropTypes.string.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   data: PropTypes.object.isRequired,
+  showRate: PropTypes.bool.isRequired,
   showInstructions: PropTypes.bool
 };
 

@@ -147,9 +147,11 @@ function PredictiveFeaturesTable({
               </span>
             </div>
             <table>
-              {featureTableHeader}
-              {featureTableData}
-              {selectedDemographicFeatureTableData}
+              <thead>{featureTableHeader}</thead>
+              <tbody>
+                {featureTableData}
+                {selectedFeatureTableData}
+              </tbody>
             </table>
           </div>
           <div className="feature-table-info">{featureTableAnnotations}</div>
@@ -166,8 +168,8 @@ function PredictiveFeaturesTable({
             </span>
           </div>
           <table>
-            {featureTableHeader}
-            {featureTableData}
+            <thead>{featureTableHeader}</thead>
+            <tbody>{featureTableData}</tbody>
           </table>
         </div>
         <div className="feature-table-info">{featureTableAnnotations}</div>

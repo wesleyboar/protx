@@ -4,37 +4,29 @@ import { fetchUtil } from '../../utils/fetchUtil';
 export function* fetchProtx(action) {
   yield put({ type: 'PROTX_INIT' });
   try {
-    const {
-      observedFeatures,
-      observedFeaturesMeta,
-      maltreatment,
-      maltreatmentMeta,
-      texasBoundary
-    } = yield all({
-      observedFeatures: call(fetchUtil, {
-        url: `/static/data/2019_observed_features.json`
-      }),
-      observedFeaturesMeta: call(fetchUtil, {
-        url: `/static/data/2019_observed_features.meta.json`
-      }),
+    const { maltreatment, demographics, texasBoundary, display } = yield all({
       maltreatment: call(fetchUtil, {
-        url: `/static/data/public_county_maltreatment_table_grouped.json`
+        url: `/api/protx/maltreatment`
       }),
-      maltreatmentMeta: call(fetchUtil, {
-        url: `/static/data/public_county_maltreatment_table_grouped.meta.json`
+      demographics: call(fetchUtil, {
+        url: `/api/protx/demographics`
       }),
       texasBoundary: call(fetchUtil, {
-        url: `/static/data/Texas_State_Boundary.geojson`
+        url: `/data-static/Texas_State_Boundary.geojson`
+      }),
+      display: call(fetchUtil, {
+        url: `/api/protx/display`
       })
     });
     yield put({
       type: 'PROTX_SUCCESS',
       payload: {
-        observedFeatures,
-        observedFeaturesMeta,
-        maltreatment,
-        maltreatmentMeta,
-        texasBoundary
+        observedFeatures: demographics.data,
+        observedFeaturesMeta: demographics.meta,
+        maltreatment: maltreatment.data,
+        maltreatmentMeta: maltreatment.meta,
+        texasBoundary,
+        display
       }
     });
   } catch (error) {
@@ -44,6 +36,32 @@ export function* fetchProtx(action) {
   }
 }
 
+export function* fetchProtxDemographicDistribution(action) {
+  yield put({ type: 'PROTX_DEMOGRAPHIC_DISTRIBUTION_INIT' });
+  try {
+    const data = yield call(fetchUtil, {
+      url: `/api/protx/demographics-plot-distribution/${action.payload.area}/${action.payload.variable}/${action.payload.unit}/`
+    });
+    yield put({
+      type: 'PROTX_DEMOGRAPHIC_DISTRIBUTION_SUCCESS',
+      payload: {
+        data: data.result
+      }
+    });
+  } catch (error) {
+    yield put({
+      type: 'PROTX_DEMOGRAPHIC_DISTRIBUTION_FAILURE'
+    });
+  }
+}
+
 export function* watchProtx() {
   yield takeLeading('FETCH_PROTX', fetchProtx);
+}
+
+export function* watchProtxDemographicDistribution() {
+  yield takeLeading(
+    'FETCH_PROTX_DEMOGRAPHIC_DISTRIBUTION',
+    fetchProtxDemographicDistribution
+  );
 }

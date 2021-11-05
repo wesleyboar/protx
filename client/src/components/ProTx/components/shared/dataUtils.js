@@ -1,5 +1,4 @@
 import { PHR_MSA_COUNTIES } from '../data/PHR_MSA_County_Data';
-import { MALTREATMENT, OBSERVED_FEATURES } from '../data/meta';
 
 /**
  *
@@ -77,14 +76,21 @@ const getObservedFeaturesMetaData = (
   data,
   geography,
   year,
-  observedFeature
+  observedFeature,
+  showRate
 ) => {
+  const selectedType = showRate ? 'percent' : 'count';
   const hasValues =
     geography in data.observedFeaturesMeta &&
-    observedFeature in data.observedFeaturesMeta[geography];
-  return hasValues
-    ? data.observedFeaturesMeta[geography][observedFeature]
-    : null;
+    year in data.observedFeaturesMeta[geography] &&
+    observedFeature in data.observedFeaturesMeta[geography][year] &&
+    selectedType in data.observedFeaturesMeta[geography][year][observedFeature];
+  if (hasValues) {
+    return data.observedFeaturesMeta[geography][year][observedFeature][
+      selectedType
+    ];
+  }
+  return null;
 };
 
 /**
@@ -93,9 +99,16 @@ const getObservedFeaturesMetaData = (
  * @param {String} geography
  * @param {Number} year
  * @param Array<{String}> maltreatmentTypes
+ * @param {bool} showRate
  * @returns {Object} meta data (min, max)
  */
-const getMaltreatmentMetaData = (data, geography, year, maltreatmentTypes) => {
+const getMaltreatmentMetaData = (
+  data,
+  geography,
+  year,
+  maltreatmentTypes,
+  showRate
+) => {
   // maltreatment data is derived from data as
   // it is based on the list of selected maltreatment types
   if (maltreatmentTypes.length === 0) {
@@ -113,11 +126,15 @@ const getMaltreatmentMetaData = (data, geography, year, maltreatmentTypes) => {
     maltreatmentTypes.forEach(malType => {
       if (malType in yearDataSet) {
         Object.entries(yearDataSet[malType]).forEach(([geoid, countInfo]) => {
-          const value = countInfo.MALTREATMENT_COUNT;
-          if (geoid in aggregrateValues) {
-            aggregrateValues[geoid] += value;
-          } else {
-            aggregrateValues[geoid] = value;
+          const value = showRate
+            ? countInfo.rate_per_100k_under17
+            : countInfo.count;
+          if (value) {
+            if (geoid in aggregrateValues) {
+              aggregrateValues[geoid] += value;
+            } else {
+              aggregrateValues[geoid] = value;
+            }
           }
         });
       }
@@ -139,6 +156,7 @@ const getMaltreatmentMetaData = (data, geography, year, maltreatmentTypes) => {
  * @param {Number} year
  * @param {String} observedFeature
  * @param Array<{String}> maltreatmentTypes
+ * @param {boolean} showRate
  * @returns {Object} meta data (min, max)
  */
 const getMetaData = (
@@ -147,12 +165,25 @@ const getMetaData = (
   geography,
   year,
   observedFeature,
-  maltreatmentTypes
+  maltreatmentTypes,
+  showRate
 ) => {
   const meta =
     mapType === 'observedFeatures'
-      ? getObservedFeaturesMetaData(data, geography, year, observedFeature)
-      : getMaltreatmentMetaData(data, geography, year, maltreatmentTypes);
+      ? getObservedFeaturesMetaData(
+          data,
+          geography,
+          year,
+          observedFeature,
+          showRate
+        )
+      : getMaltreatmentMetaData(
+          data,
+          geography,
+          year,
+          maltreatmentTypes,
+          showRate
+        );
   return meta;
 };
 
@@ -163,6 +194,7 @@ const getMetaData = (
  * @param {Number} year
  * @param {Number} geoid
  * @param {String} observedFeature
+ * @param {boolean} showRate
  * @returns {Number} value (null if no value exists)
  */
 const getObservedFeatureValue = (
@@ -170,13 +202,18 @@ const getObservedFeatureValue = (
   geography,
   year,
   geoid,
-  observedFeature
+  observedFeature,
+  showRate
 ) => {
   const dataSet = data.observedFeatures[geography];
-  const hasElement = geoid in dataSet;
-  const hasElementAndProperty = hasElement && observedFeature in dataSet[geoid];
+  const valueType = showRate ? 'percent' : 'count';
+  const hasElementAndProperty =
+    year in dataSet &&
+    observedFeature in dataSet[year] &&
+    geoid in dataSet[year][observedFeature] &&
+    valueType in dataSet[year][observedFeature][geoid];
   const featureValue = hasElementAndProperty
-    ? dataSet[geoid][observedFeature]
+    ? dataSet[year][observedFeature][geoid][valueType]
     : null;
   return featureValue;
 };
@@ -194,6 +231,7 @@ const getMaltreatmentAggregatedValue = (
   data,
   geography,
   year,
+  showRate,
   geoid,
   maltreatmentTypes
 ) => {
@@ -202,12 +240,13 @@ const getMaltreatmentAggregatedValue = (
   let value = 0;
   if (hasYearAndGeography) {
     maltreatmentTypes.forEach(malType => {
+      const valueType = showRate ? `rate_per_100k_under17` : `count`;
       if (
         malType in data.maltreatment[geography][year] &&
-        geoid in data.maltreatment[geography][year][malType]
+        geoid in data.maltreatment[geography][year][malType] &&
+        valueType in data.maltreatment[geography][year][malType][geoid]
       ) {
-        value +=
-          data.maltreatment[geography][year][malType][geoid].MALTREATMENT_COUNT;
+        value += data.maltreatment[geography][year][malType][geoid][valueType];
       }
     });
   }
@@ -215,19 +254,22 @@ const getMaltreatmentAggregatedValue = (
 };
 
 /**
+ *  Get list of maltreatment display names
  *
  * @param {*} typesDataArray
  * @returns
  */
-const getMaltreatmentTypeNames = maltreatmentTypeCodes => {
+const getMaltreatmentTypeNames = (maltreatmentTypeCodes, data) => {
   const updatedMaltreatmentTypesList = [];
   if (maltreatmentTypeCodes.length === 0) {
     return ['None'];
   }
   for (let i = 0; i < maltreatmentTypeCodes.length; i += 1) {
-    for (let j = 0; j < MALTREATMENT.length; j += 1) {
-      if (maltreatmentTypeCodes[i] === MALTREATMENT[j].field) {
-        updatedMaltreatmentTypesList.push(MALTREATMENT[j].name);
+    for (let j = 0; j < data.display.variables.length; j += 1) {
+      if (maltreatmentTypeCodes[i] === data.display.variables[j].NAME) {
+        updatedMaltreatmentTypesList.push(
+          data.display.variables[j].DISPLAY_TEXT
+        );
       }
     }
   }
@@ -247,6 +289,7 @@ const getMaltreatmentSelectedValues = (
   data,
   geography,
   year,
+  showRate,
   geoid,
   maltreatmentTypes
 ) => {
@@ -256,17 +299,32 @@ const getMaltreatmentSelectedValues = (
   if (hasYearAndGeography) {
     maltreatmentTypes.forEach(malType => {
       let value = 0; // Revisit this supposition about missing data values later with Kelly.
+      const valueType = showRate ? `rate_per_100k_under17` : `count`;
       if (
         malType in data.maltreatment[geography][year] &&
-        geoid in data.maltreatment[geography][year][malType]
+        geoid in data.maltreatment[geography][year][malType] &&
+        valueType in data.maltreatment[geography][year][malType][geoid]
       ) {
-        value =
-          data.maltreatment[geography][year][malType][geoid].MALTREATMENT_COUNT;
+        value = data.maltreatment[geography][year][malType][geoid][valueType];
       }
       valuesArray.push(value);
     });
   }
   return valuesArray;
+};
+
+/**
+ * Get label for selected maltreatment types
+ * @param Array<{String}> maltreatmentTypes
+ * @param <bool> showRate
+ */
+const getMaltreatmentLabel = (maltreatmentTypes, showRate) => {
+  if (showRate) {
+    return maltreatmentTypes.length > 1
+      ? 'Aggregated rate per 100k children'
+      : 'Rate per 100k children';
+  }
+  return maltreatmentTypes.length > 1 ? 'Aggregated Count' : 'Count';
 };
 
 /**
@@ -287,14 +345,15 @@ const getMaltreatmentTypesDataObject = (codeArray, nameArray, valueArray) => {
   return newMaltreatmentDataObject;
 };
 
-/**
+/** Get display label for selected observed feature
  *
- * @param {*} typesDataArray
- * @returns
+ * @param selectedObservedFeatureCode:str code of feature
+ * @returns label
  */
-const getObservedFeaturesLabel = selectedObservedFeatureCode => {
-  return OBSERVED_FEATURES.find(f => selectedObservedFeatureCode === f.field)
-    .name;
+const getObservedFeaturesLabel = (selectedObservedFeatureCode, data) => {
+  return data.display.variables.find(
+    f => selectedObservedFeatureCode === f.NAME
+  ).DISPLAY_TEXT;
 };
 
 /**
@@ -302,14 +361,11 @@ const getObservedFeaturesLabel = selectedObservedFeatureCode => {
  * @param {*} selectedObservedFeatureCode
  * @returns {valueType: string}
  */
-const getObservedFeatureValueType = selectedObservedFeatureCode => {
-  const hasValue = OBSERVED_FEATURES.find(
-    f => selectedObservedFeatureCode === f.field
-  ).valueType;
-  if (hasValue === 'percent') {
-    return 'Percent';
-  }
-  return 'Total Count';
+const getObservedFeatureValueType = (selectedObservedFeatureCode, data) => {
+  const units = data.display.variables.find(
+    f => selectedObservedFeatureCode === f.NAME
+  ).UNITS;
+  return units.charAt(0).toUpperCase() + units.slice(1);
 };
 
 /**
@@ -335,6 +391,7 @@ export {
   getFipsIdName,
   getMaltreatmentTypeNames,
   getMaltreatmentSelectedValues,
+  getMaltreatmentLabel,
   getMaltreatmentTypesDataObject,
   getObservedFeaturesLabel,
   getObservedFeatureValueType,
