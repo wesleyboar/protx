@@ -4,18 +4,27 @@ import { fetchUtil } from '../../utils/fetchUtil';
 export function* fetchProtx(action) {
   yield put({ type: 'PROTX_INIT' });
   try {
-    const { maltreatment, demographics, texasBoundary, display } = yield all({
+    const {
+      maltreatment,
+      demographics,
+      texasBoundary,
+      display,
+      resources
+    } = yield all({
       maltreatment: call(fetchUtil, {
-        url: `/api/protx/maltreatment`
+        url: `/api/protx/maltreatment/`
       }),
       demographics: call(fetchUtil, {
-        url: `/api/protx/demographics`
+        url: `/api/protx/demographics/`
       }),
       texasBoundary: call(fetchUtil, {
         url: `/data-static/Texas_State_Boundary.geojson`
       }),
       display: call(fetchUtil, {
-        url: `/api/protx/display`
+        url: `/api/protx/display/`
+      }),
+      resources: call(fetchUtil, {
+        url: `/api/protx/resources/`
       })
     });
     yield put({
@@ -26,7 +35,9 @@ export function* fetchProtx(action) {
         maltreatment: maltreatment.data,
         maltreatmentMeta: maltreatment.meta,
         texasBoundary,
-        display
+        display,
+        resources: resources.resources,
+        resourcesMeta: resources.display
       }
     });
   } catch (error) {

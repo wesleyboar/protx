@@ -2,12 +2,19 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import L from 'leaflet';
 import 'leaflet.vectorgrid';
+import 'leaflet.markercluster';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import MapProviders from './MapProviders';
 import { GEOID_KEY } from '../data/meta';
 import './MainMap.css';
 import './MainMap.module.scss';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
 import {
   getMetaData,
   getMaltreatmentLabel,
@@ -17,6 +24,13 @@ import getFeatureStyle from '../shared/mapUtils';
 import IntervalColorScale from '../shared/colorsUtils';
 
 let mapContainer;
+
+const DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 function MainMap({
   mapType,
@@ -30,6 +44,9 @@ function MainMap({
   setSelectedGeographicFeature
 }) {
   const dataServer = window.location.origin;
+
+  const resources = useSelector(state => state.protx.data.resources);
+  const resourcesMeta = useSelector(state => state.protx.data.resourcesMeta);
 
   // Leaflet related layers, controls, and map
   const [legendControl, setLegendControl] = useState(null);
@@ -144,7 +161,71 @@ function MainMap({
   ]);
 
   useEffect(() => {
+    // display resources data
+    if (map && layersControl && resources) {
+      const resourcesClusterGroups = {};
+      resources.forEach(point => {
+        if (!(point.NAICS_CODE in resourcesClusterGroups)) {
+          resourcesClusterGroups[point.NAICS_CODE] = L.markerClusterGroup({
+            showCoverageOnHover: false
+          });
+        }
+
+        const marker = L.marker(L.latLng(point.LATITUDE, point.LONGITUDE), {
+          title: point.NAME
+        });
+
+        let popupContentAssemblage = `<div class="marker-popup-content">`;
+        if (point.NAME !== null) {
+          popupContentAssemblage += `<div class="marker-popup-name">${point.NAME}</div>`;
+        }
+        if (point.HOVER_DESCRIPTION !== null) {
+          popupContentAssemblage += `<div class="marker-popup-description">${point.HOVER_DESCRIPTION}</div>`;
+        }
+        if (point.STREET !== null) {
+          popupContentAssemblage += `<div class="marker-popup-street">${point.STREET}</div>`;
+        }
+        popupContentAssemblage += `<div class="marker-popup-location">`;
+        if (point.CITY !== null) {
+          popupContentAssemblage += `${point.CITY}, `;
+        }
+        if (point.STATE !== null) {
+          popupContentAssemblage += `${point.STATE}, `;
+        }
+        if (point.POSTAL_CODE !== null) {
+          popupContentAssemblage += `${point.POSTAL_CODE}`;
+        }
+        popupContentAssemblage += `</div>`;
+        if (point.PHONE !== null) {
+          popupContentAssemblage += `<div class="marker-popup-phone">${point.PHONE}</div>`;
+        }
+        if (point.WEBSITE !== null) {
+          popupContentAssemblage += `<div class="marker-popup-website"><a href="${point.WEBSITE}" target="_blank">website</a></div>`;
+        }
+        popupContentAssemblage += `</div>`;
+
+        const popupContent = popupContentAssemblage;
+        marker.bindPopup(popupContent);
+        resourcesClusterGroups[point.NAICS_CODE].addLayers(marker);
+      });
+
+      Object.keys(resourcesClusterGroups).forEach(naicsCode => {
+        const markersClusterGroup = resourcesClusterGroups[naicsCode];
+        map.addLayer(markersClusterGroup);
+        const matchingMeta = resourcesMeta.find(
+          r => r.NAICS_CODE === parseInt(naicsCode, 10)
+        );
+        const layerLabel = matchingMeta
+          ? matchingMeta.DESCRIPTION
+          : `Unknown Resource (${naicsCode})`;
+        layersControl.addOverlay(markersClusterGroup, layerLabel);
+      });
+    }
+  }, [layersControl, map, resources]);
+
+  useEffect(() => {
     const vectorTile = `${dataServer}/data-static/vector/${geography}/2019/{z}/{x}/{y}.pbf`;
+
     if (map && layersControl) {
       const newDataLayer = L.vectorGrid.protobuf(vectorTile, {
         vectorTileLayerStyles: {
