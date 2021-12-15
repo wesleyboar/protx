@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Plot from 'react-plotly.js';
+// import Plot from 'react-plotly.js';
 import { useSelector } from 'react-redux';
 import { LoadingSpinner } from '_common';
 import {
@@ -18,7 +18,7 @@ import {
   // hoverTemplate
 } from '../shared/plotUtils';
 
-function ObservedFeaturesPlotSimple({
+function ObservedFeaturesPlot({
   mapType,
   geography,
   observedFeature,
@@ -644,7 +644,7 @@ function ObservedFeaturesPlotSimple({
   );
 }
 
-ObservedFeaturesPlotSimple.propTypes = {
+ObservedFeaturesPlot.propTypes = {
   mapType: PropTypes.string.isRequired,
   geography: PropTypes.string.isRequired,
   observedFeature: PropTypes.string.isRequired,
@@ -655,6 +655,6 @@ ObservedFeaturesPlotSimple.propTypes = {
   showRate: PropTypes.bool.isRequired
 };
 
-ObservedFeaturesPlotSimple.defaultProps = {};
+ObservedFeaturesPlot.defaultProps = {};
 
-export default ObservedFeaturesPlotSimple;
+export default ObservedFeaturesPlot;
