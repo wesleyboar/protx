@@ -8,4 +8,4 @@ const plotLineTimeSeries = linedata => {
   return response;
 };
 
-export { plotLineTimeSeries };
+export { plotLineTimeSeries as default };
