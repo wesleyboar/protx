@@ -17,6 +17,7 @@ import {
   plotTraceBaseTemplate
   // hoverTemplate
 } from '../shared/plotUtils';
+import { plotLineTimeSeries as timeseriesLineplot } from '../shared/plotLineTimeSeries';
 
 function ObservedFeaturesPlot({
   mapType,
@@ -603,7 +604,15 @@ function ObservedFeaturesPlot({
     };
 
     const selectedRegion = getFipsIdName(selectedGeographicFeature);
+
+    /* TODO:
+     * - Convert plotData to a simple line plot design.
+     * - Use the imported timeseriesLineplot() method.
+     * - Replace plotData with plot (but keep the name plotData).
+     */
     const plotData = prepPlotData(selectedRegion, rawData);
+    const plot = timeseriesLineplot(rawData);
+    console.log(plot);
 
     const plotState = {
       data: plotData,
@@ -616,6 +625,7 @@ function ObservedFeaturesPlot({
       observedFeaturesPlotState: plotState
     };
 
+    // console.log(observedFeaturesPlotData);
     return observedFeaturesPlotData;
   };
 
