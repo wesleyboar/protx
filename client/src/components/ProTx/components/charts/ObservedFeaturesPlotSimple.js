@@ -17,7 +17,7 @@ import {
   plotTraceBaseTemplate
   // hoverTemplate
 } from '../shared/plotUtils';
-import { plotLineTimeSeries as timeseriesLineplot } from '../shared/plotLineTimeSeries';
+import { getPlotLineTimeSeries as timeseriesLineplot } from '../shared/plotLineTimeSeries';
 
 function ObservedFeaturesPlot({
   mapType,

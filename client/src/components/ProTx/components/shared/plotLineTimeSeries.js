@@ -1,6 +1,6 @@
 // import ...
 
-const plotLineTimeSeries = linedata => {
+const getPlotLineTimeSeries = linedata => {
   const response = {
     data: linedata
   };
@@ -8,4 +8,4 @@ const plotLineTimeSeries = linedata => {
   return response;
 };
 
-export { plotLineTimeSeries };
+export { getPlotLineTimeSeries };
