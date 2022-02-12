@@ -1,13 +1,46 @@
+/* derived from https://colorbrewer2.org/#type=sequential&scheme=YlOrRd&n=6 */
 const colorbrewerClassYlOrBr = {
-  /* derived from https://colorbrewer2.org/#type=sequential&scheme=YlOrRd&n=6 */
   6: ['#ffffd4', '#fee391', '#fec44f', '#fe9929', '#d95f0e', '#993404'],
   5: ['#ffffd4', '#fed98e', '#fe9929', '#d95f0e', '#993404'],
   4: ['#ffffd4', '#fed98e', '#fe9929', '#cc4c02'],
-  3: [`#fff7bc`, `#fec44f`, `#d95f0e`],
-  2: [`#fff7bc`, `#fec44f`],
-  1: [`#fff7bc`]
+  3: ['#fff7bc', '#fec44f', '#d95f0e'],
+  2: ['#fff7bc', '#fec44f'],
+  1: ['#fff7bc']
 };
 
+/* derived from https://jira.tacc.utexas.edu/secure/attachment/15628/Cook_Childrens_Guide_Abbreviated%201-14-22.pdf */
+const cooksBrandingNarrowGradient = {
+  6: ['#EAF6C7', '#D4EC8E', '#A9C47F', '#007A53', '#003B5C', '#001E2E'],
+  5: ['#EAF6C7', '#D4EC8E', '#A9C47F', '#007A53', '#003B5C'],
+  4: ['#D4EC8E', '#A9C47F', '#007A53', '#003B5C'],
+  3: ['#A9C47F', '#007A53', '#003B5C'],
+  2: ['#007A53', '#003B5C'],
+  1: ['#007A53']
+};
+const cooksBrandingWideLightnessGradient = {
+  9: ['#001E2E', '#003B5C', '#545859', '#007A53', '#41748D', '#A9C47F', '#B9D3DC', '#D4EC8E', '#EAF6C7'],
+  8: ['#003B5C', '#545859', '#007A53', '#41748D', '#A9C47F', '#B9D3DC', '#D4EC8E', '#EAF6C7'],
+  7: ['#003B5C', '#545859', '#007A53', '#41748D', '#A9C47F', '#B9D3DC', '#D4EC8E'],
+  6: ['#003B5C', '#545859', '#007A53', '#41748D', '#B9D3DC', '#A9C47F'],
+  5: ['#003B5C', '#545859', '#007A53', '#41748D', '#A9C47F'],
+  4: ['#003B5C', '#007A53', '#41748D', '#A9C47F'],
+  3: ['#003B5C', '#007A53', '#A9C47F'],
+  2: ['#003B5C', '#007A53'],
+  1: ['#007A53'],
+};
+const cooksBrandingWideHueGradient = {
+  9: ['#545859', '#41748D', '#B9D3DC', '#EAF6C7', '#D4EC8E', '#A9C47F', '#007A53', '#003B5C', '#001E2E'],
+  8: ['#545859', '#41748D', '#B9D3DC', '#D4EC8E', '#A9C47F', '#007A53', '#003B5C', '#001E2E'],
+  7: ['#545859', '#41748D', '#B9D3DC', '#D4EC8E', '#A9C47F', '#007A53', '#003B5C'],
+  6: ['#545859', '#41748D', '#B9D3DC', '#A9C47F', '#007A53', '#003B5C'],
+  5: ['#41748D', '#B9D3DC', '#A9C47F', '#007A53', '#003B5C'],
+  4: ['#B9D3DC', '#A9C47F', '#007A53', '#003B5C'],
+  3: ['#A9C47F', '#007A53', '#003B5C'],
+  2: ['#007A53', '#003B5C'],
+  1: ['#007A53'],
+};
+
+/* undocumented */
 const THEME_CB12_MAIN = [
   '#4363d8',
   '#911eb4',
@@ -126,6 +159,7 @@ const THEME_HIST_GRADIENT_ALT1 = [
 
 export {
   colorbrewerClassYlOrBr,
+  cooksBrandingNarrowGradient,
   THEME_CB12_MAIN,
   THEME_CB12_ALT0,
   THEME_CB12_ALT1,

@@ -1,4 +1,4 @@
-import { colorbrewerClassYlOrBr } from '../data/colors';
+import { cooksBrandingNarrowGradient } from '../data/colors';
 
 /** Interval color scale
 
@@ -23,7 +23,7 @@ class IntervalColorScale {
     } else {
       this.numberIntervals = 6;
     }
-    this.colors = colorbrewerClassYlOrBr[this.numberIntervals];
+    this.colors = cooksBrandingNarrowGradient[this.numberIntervals];
 
     const intervalValues = [];
     if (singleValueClasses) {
